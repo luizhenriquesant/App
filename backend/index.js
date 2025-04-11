@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import userRoutes from './routes/user.routes.js';
 import formBody from '@fastify/formbody';
+import 'dotenv/config';
 
 const fastify = Fastify({ logger: true });
 
