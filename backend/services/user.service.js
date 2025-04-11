@@ -1,4 +1,4 @@
-const userModel = require('../models/user.model');
+import userModel from '../models/user.model.js';
 
 async function registerUser(data) {
   // Aqui você pode validar, criptografar senha etc

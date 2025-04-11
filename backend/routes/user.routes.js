@@ -1,6 +1,6 @@
-const userController = require('../controllers/user.controller');
+import userController from '../controllers/user.controller';
 
-async function userRoutes(fastify, options) {
+async function userRoutes(fastify) {
   fastify.post('/users', userController.register);
 }
 
