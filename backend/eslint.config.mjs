@@ -1,13 +1,13 @@
-import { defineConfig } from "eslint/config";
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
+import { defineConfig } from 'eslint/config';
+import js from '@eslint/js';
+import globals from 'globals';
+import pluginReact from 'eslint-plugin-react';
 
 export default defineConfig([
   // Configuração base para JavaScript
   {
-    ignores: ["node_modules", "dist", "build"],
-    files: ["**/*.{js,mjs,cjs,jsx}"],
+    ignores: ['node_modules', 'dist', 'build'],
+    files: ['**/*.{js,mjs,cjs,jsx}'],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -17,6 +17,9 @@ export default defineConfig([
     rules: {
       // Proíbe variáveis não utilizadas
       'no-unused-vars': 'error',
+
+      // String precis ser aspas simples
+      quotes: ['error', 'single'],
 
       // Força o uso de async/await quando necessário
       'require-await': 'error',
@@ -37,18 +40,18 @@ export default defineConfig([
 
   // Configuração recomendada para React
   {
-    files: ["**/*.{jsx}"],
+    files: ['**/*.{jsx}'],
     plugins: {
       react: pluginReact,
     },
     settings: {
       react: {
-        version: "detect", // Detecta automaticamente a versão do React
+        version: 'detect', // Detecta automaticamente a versão do React
       },
     },
     rules: {
-      "react/react-in-jsx-scope": "off", // Desabilita a regra se estiver usando React 17+
-      "react/jsx-uses-vars": "error",
+      'react/react-in-jsx-scope': 'off', // Desabilita a regra se estiver usando React 17+
+      'react/jsx-uses-vars': 'error',
     },
   },
 ]);
