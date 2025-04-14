@@ -1,8 +1,8 @@
-import userModel from '../models/user.model.js';
+import {createUser} from '../models/user.model.js';
 
 async function registerUser(data) {
   // Aqui você pode validar, criptografar senha etc
-  return await userModel.createUser(data);
+  return await createUser(data);
 }
 
-module.exports = { registerUser };
+export default registerUser;
