@@ -1,7 +1,7 @@
-import userController from '../controllers/user.controller';
+import {register} from '../controllers/user.controller.js';
 
-async function userRoutes(fastify) {
-  fastify.post('/users', userController.register);
+function userRoutes(fastify) {
+  fastify.post('/users', register);
 }
 
-module.exports = userRoutes;
+export default userRoutes;

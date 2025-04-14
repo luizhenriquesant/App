@@ -1,6 +1,7 @@
-import { Pool } from 'pg';
+import pg from 'pg';
+const { Pool } = pg;
 
-const pool = new Pool({
+const db = new Pool({
   user: 'seu_usuario',
   host: 'localhost',
   database: 'seu_banco',
@@ -8,4 +9,4 @@ const pool = new Pool({
   port: 5432,
 });
 
-module.exports = pool;
+export default db;

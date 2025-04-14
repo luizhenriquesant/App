@@ -1,6 +1,6 @@
-import userService from '../services/user.service.js';
+import registerUser from '../services/user.service.js';
 
-exports.register = async (req, reply) => {
+export const register = async (req, reply) => {
   try {
     const { name, email, password } = req.body;
 
@@ -8,10 +8,10 @@ exports.register = async (req, reply) => {
       return reply.code(400).send({ error: 'Campos obrigatórios ausentes' });
     }
 
-    const user = await userService.registerUser({ name, email, password });
+    const user = await registerUser({ name, email, password });
     return reply.code(201).send(user);
   } catch (err) {
-    if (err.code === '23505') { // email duplicado
+    if (err.code === '23505') {
       return reply.code(409).send({ error: 'Email já cadastrado' });
     }
     return reply.code(500).send({ error: 'Erro interno', details: err.message });
