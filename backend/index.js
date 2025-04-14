@@ -1,12 +1,12 @@
 import Fastify from 'fastify';
 import userRoutes from './routes/user.routes.js';
-import formBody from '@fastify/formbody';
+import recipeRoutes from './routes/recipe.routes.js';
 import 'dotenv/config';
 
 const fastify = Fastify({ logger: true });
 
-fastify.register(formBody); // para req.body
 fastify.register(userRoutes);
+fastify.register(recipeRoutes);
 
 const start = async () => {
   try {
