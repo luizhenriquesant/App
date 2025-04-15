@@ -8,6 +8,5 @@ export async function getRecipes(ingredientes) {
     ];
     const resposta = await sendPrompt(prompt, messages, 0.7);
 
-    console.log('UEPA', resposta);
     return resposta;
 }
