@@ -1,8 +1,6 @@
 import OpenAI from 'openai';
 
 export async function sendPrompt(prompt, messages, temperature, max_tokens = 1000) {
-    console.log('Processando prompt:', prompt.substring(0, 50) + (prompt.length > 50 ? '...' : ''));
-
     if (!process.env.DEEP_SEEK_API_KEY) {
         throw new Error('API key não configurada');
     }

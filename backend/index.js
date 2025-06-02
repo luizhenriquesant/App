@@ -1,12 +1,14 @@
 import Fastify from 'fastify';
 import userRoutes from './routes/user.routes.js';
 import recipeRoutes from './routes/recipe.routes.js';
+import visionRoutes from './routes/vision.routes.js';
 import 'dotenv/config';
 
 const fastify = Fastify({ logger: true });
 
 fastify.register(userRoutes);
 fastify.register(recipeRoutes);
+fastify.register(visionRoutes);
 
 const start = async () => {
   try {
