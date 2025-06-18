@@ -1,4 +1,4 @@
-import {analyzeImage} from '../services/vision.service.js';
+import {analyzeImage} from '../services/google-cloud-vision-api/food-reg.service.js';
 
 export const visionGetter = async (req, res) => {
     try {
