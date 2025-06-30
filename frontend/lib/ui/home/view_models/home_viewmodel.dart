@@ -1,93 +1,121 @@
-// Copyright 2024 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:logging/logging.dart';
 
-// import '../../../data/repositories/booking/booking_repository.dart';
+import '../../core/services/image_service.dart';
 
-// import '../../../utils/command.dart';
-// import '../../../utils/result.dart';
+import '../../../data/repositories/recipe/recipe_repository.dart';
+
+import '../../../domain/models/recipe/recipe.dart';
+
+import '../../../utils/command.dart';
+import '../../../utils/result.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  // HomeViewModel({
-  //   required BookingRepository bookingRepository,
-  //   required UserRepository userRepository,
-  // }) : _bookingRepository = bookingRepository,
-  //      _userRepository = userRepository {
-  //   load = Command0(_load)..execute();
-  //   deleteBooking = Command1(_deleteBooking);
-  // }
+  HomeViewModel({
+    required ImageService imageService,
+    required RecipeRepository recipeRepository,
+  }) : _imageService = imageService,
+       _recipeRepository = recipeRepository {
+    pickFromCamera = Command0(_pickFromCamera);
+    pickFromGallery = Command0(_pickFromGallery);
+    uploadImage = Command0(() => _uploadImage());
+  }
 
-  // final BookingRepository _bookingRepository;
-  // final UserRepository _userRepository;
+  final ImageService _imageService;
+  final RecipeRepository _recipeRepository;
   // final _log = Logger('HomeViewModel');
-  // List<BookingSummary> _bookings = [];
-  // User? _user;
 
-  // late Command0 load;
-  // late Command1<void, int> deleteBooking;
+  XFile? _selectedImage;
+  XFile? get selectedImage => _selectedImage;
 
-  // List<BookingSummary> get bookings => _bookings;
+  Recipe? _generatedRecipe;
+  Recipe? get generatedRecipe => _generatedRecipe;
 
-  // User? get user => _user;
+  Exception? _error;
+  Exception? get error => _error;
 
-  // Future<Result> _load() async {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  late Command0 pickFromCamera;
+  late Command0 pickFromGallery;
+  late Command0<void> uploadImage;
+
+  // Future<void> _load() async {
   //   try {
-  //     final result = await _bookingRepository.getBookingsList();
+  //     final result = Ok;
   //     switch (result) {
-  //       case Ok<List<BookingSummary>>():
-  //         _bookings = result.value;
+  //       case Ok():
   //         _log.fine('Loaded bookings');
-  //       case Error<List<BookingSummary>>():
-  //         _log.warning('Failed to load bookings', result.error);
-  //         return result;
+  //       case Error():
+  //         _log.warning('Failed to load bookings');
   //     }
-
-  //     final userResult = await _userRepository.getUser();
-  //     switch (userResult) {
-  //       case Ok<User>():
-  //         _user = userResult.value;
-  //         _log.fine('Loaded user');
-  //       case Error<User>():
-  //         _log.warning('Failed to load user', userResult.error);
-  //     }
-
-  //     return userResult;
   //   } finally {
   //     notifyListeners();
   //   }
   // }
 
-  // Future<Result<void>> _deleteBooking(int id) async {
-  //   try {
-  //     final resultDelete = await _bookingRepository.delete(id);
-  //     switch (resultDelete) {
-  //       case Ok<void>():
-  //         _log.fine('Deleted booking $id');
-  //       case Error<void>():
-  //         _log.warning('Failed to delete booking $id', resultDelete.error);
-  //         return resultDelete;
-  //     }
+  Future<Result<void>> _pickFromCamera() async {
+    try {
+      _selectedImage = await _imageService.pickFromCamera();
+      notifyListeners();
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception(e.toString()));
+    }
+  }
 
-  //     // After deleting the booking, we need to reload the bookings list.
-  //     // BookingRepository is the source of truth for bookings.
-  //     final resultLoadBookings = await _bookingRepository.getBookingsList();
-  //     switch (resultLoadBookings) {
-  //       case Ok<List<BookingSummary>>():
-  //         _bookings = resultLoadBookings.value;
-  //         _log.fine('Loaded bookings');
-  //       case Error<List<BookingSummary>>():
-  //         _log.warning('Failed to load bookings', resultLoadBookings.error);
-  //         return resultLoadBookings;
-  //     }
+  Future<Result<void>> _pickFromGallery() async {
+    try {
+      _selectedImage = await _imageService.pickFromGallery();
+      notifyListeners();
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception(e.toString()));
+    }
+  }
 
-  //     return resultLoadBookings;
-  //   } finally {
-  //     notifyListeners();
-  //   }
-  // }
+  Future<Result<void>> _uploadImage() async {
+    if (_selectedImage == null) {
+      final error = Exception('Nenhuma imagem selecionada');
+      _error = error;
+      notifyListeners();
+
+      return Result.error(error);
+    }
+
+    _isLoading = true;
+    _error = null;
+    _generatedRecipe = null;
+    notifyListeners();
+
+    try {
+      final result = await _recipeRepository.generateRecipe(
+        File(_selectedImage!.path),
+      );
+
+      switch (result) {
+        case Ok(value: final recipe):
+          _generatedRecipe = recipe;
+          print('ViewModel: _generatedRecipe foi definido com sucesso.');
+          return const Result.ok(null);
+
+        case Error(error: final error):
+          _error = error;
+          print('ViewModel: Erro ao gerar receita: $error');
+          return Result.error(error);
+      }
+    } catch (e) {
+      final error = Exception(e.toString());
+      _error = error;
+      return Result.error(error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

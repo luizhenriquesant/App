@@ -1,35 +1,13 @@
-// Copyright 2024 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-import '../data/repositories/auth/auth_repository.dart';
-// import '../data/repositories/auth/auth_repository_dev.dart';
-// import '../data/repositories/auth/auth_repository_remote.dart';
-// import '../data/repositories/booking/booking_repository_local.dart';
-// import '../data/repositories/booking/booking_repository_remote.dart';
-// import '../data/services/api/api_client.dart';
-// import '../data/services/api/auth_api_client.dart';
-// import '../domain/use_cases/booking/booking_create_use_case.dart';
-// import '../domain/use_cases/booking/booking_share_use_case.dart';
+// import '../data/repositories/auth/auth_repository.dart';
 
-/// Shared providers for all configurations.
-// List<SingleChildWidget> _sharedProviders = [
-//   Provider(
-//     lazy: true,
-//     create: (context) => BookingCreateUseCase(
-//       destinationRepository: context.read(),
-//       activityRepository: context.read(),
-//       bookingRepository: context.read(),
-//     ),
-//   ),
-//   Provider(
-//     lazy: true,
-//     create: (context) => BookingShareUseCase.withSharePlus(),
-//   ),
-// ];
+import '../data/services/recipe/recipe_service.dart'; //ApiClient
+
+import '../ui/core/services/image_service.dart';
+import '../data/repositories/recipe/recipe_repository_impl.dart';
+import '../data/repositories/recipe/recipe_repository.dart';
 
 /// Configure dependencies for remote data.
 /// This dependency list uses repositories that connect to a remote server.
@@ -61,19 +39,13 @@ import '../data/repositories/auth/auth_repository.dart';
 //   ];
 // }
 
-/// Configure dependencies for local data.
-/// This dependency list uses repositories that provide local data.
-/// The user is always logged in.
 List<SingleChildWidget> get providersLocal {
   return [
-    // ChangeNotifierProvider.value(value: AuthRepositoryDev() as AuthRepository),
-    // Provider.value(value: LocalDataService()),
-    // Provider(
-    //   create: (context) =>
-    //       BookingRepositoryLocal(localDataService: context.read())
-    //           as BookingRepository,
-    // ),
-    // ..._sharedProviders,
-    Provider.value(value: null),
+    Provider<ApiClient>(lazy: true, create: (_) => ApiClient()),
+    Provider<RecipeRepository>(
+      lazy: true,
+      create: (context) => RecipeRepositoryImpl(context.read<ApiClient>()),
+    ),
+    Provider<ImageService>(lazy: true, create: (_) => ImageService()),
   ];
 }

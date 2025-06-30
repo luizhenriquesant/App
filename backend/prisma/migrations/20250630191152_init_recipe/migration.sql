@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "Recipe" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "duration" TEXT NOT NULL,
+    "recipeText" TEXT NOT NULL
+);
