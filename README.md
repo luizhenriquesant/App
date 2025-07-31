@@ -5,8 +5,6 @@
 
 Recipe AI é um protótipo de aplicativo full-stack que explora conceitos de computação pervasiva para resolver o "bloqueio criativo" na cozinha. Utilizando um modelo de IA de visão computacional, o aplicativo gera receitas a partir de uma foto dos ingredientes que o usuário tem em mãos, tornando a tecnologia uma assistente invisível e contextual.
 
-![Demo do App](https://via.placeholder.com/600x350.png?text=Adicione+um+GIF+da+demonstração+aqui)
-
 ## ✨ Conceitos e Funcionalidades
 
 Este projeto foi desenvolvido com foco nos seguintes princípios de Computação Pervasiva:
