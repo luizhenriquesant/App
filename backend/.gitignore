@@ -1,5 +1,6 @@
 node_modules
 # Keep environment variables out of version control
 .env
-
+uploads
+food-rec-463315-f788277cbf34.json
 /generated/prisma

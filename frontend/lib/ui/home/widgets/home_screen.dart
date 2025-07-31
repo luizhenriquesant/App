@@ -126,46 +126,100 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add_a_photo),
       ),
       body: ListenableBuilder(
-        listenable: viewModel.uploadImage,
+        // Ouve o novo comando 'loadRecipes'
+        listenable: viewModel.loadRecipes,
         builder: (context, child) {
-          if (viewModel.uploadImage.running) {
+          // Se o carregamento inicial está rodando, mostra o loading.
+          if (viewModel.loadRecipes.running) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (viewModel.uploadImage.error) {
+
+          // Se o carregamento inicial deu erro, mostra o indicador de erro.
+          if (viewModel.loadRecipes.error) {
             return ErrorIndicator(
-              title: 'Erro ao gerar a receita',
+              title: 'Erro ao carregar suas receitas',
               label: 'Tentar Novamente',
-              onPressed: viewModel.uploadImage.execute,
+              onPressed: viewModel.loadRecipes.execute,
             );
           }
+
+          // Se não está rodando nem com erro, mostra o conteúdo principal.
           return child!;
         },
+        // O child é o conteúdo que depende do estado de UPLOAD
         child: ListenableBuilder(
-          listenable: viewModel,
-          builder: (context, _) {
-            final image = viewModel.selectedImage;
-            return Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: image != null
-                        ? Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.file(
-                                File(image.path),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : const Text('Selecione uma imagem para começar'),
-                  ),
+          listenable: viewModel.uploadImage,
+          builder: (context, child) {
+            // Se o UPLOAD está rodando, mostra um loading diferente (sobrepõe o conteúdo)
+            if (viewModel.uploadImage.running) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 10),
+                    Text('Gerando sua nova receita...'),
+                  ],
                 ),
-              ],
-            );
+              );
+            }
+            // Senão, mostra o conteúdo principal
+            return child!;
           },
+          // O child final é a lista ou a tela de boas-vindas
+          child: ListenableBuilder(
+            listenable: viewModel,
+            builder: (context, _) {
+              // Se a lista de receitas NÃO ESTIVER VAZIA, mostre a lista.
+              if (viewModel.recipes.isNotEmpty) {
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: viewModel.recipes.length,
+                  itemBuilder: (context, index) {
+                    final recipe = viewModel.recipes[index];
+                    return _RecipeListItem(
+                      recipe: recipe,
+                      onTap: () =>
+                          context.pushNamed(Routes.recipe, extra: recipe),
+                    );
+                  },
+                );
+              }
+
+              // Se a lista estiver vazia, mostre a mensagem inicial.
+              return const Center(
+                child: Text(
+                  'Nenhuma receita salva.\nSelecione uma imagem para começar!',
+                ),
+              );
+            },
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _RecipeListItem extends StatelessWidget {
+  const _RecipeListItem({required this.recipe, required this.onTap});
+
+  final Recipe recipe;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(
+          // Pega a primeira linha do texto da receita como título
+          recipe.recipeText.split('\n').first.replaceAll('**', ''),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text('Duração: ${recipe.duration}'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
     );
   }
