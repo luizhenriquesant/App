@@ -7,16 +7,16 @@ export async function postRecipe(imagePath) {
     const prompt = `Me dê uma receita com: ${ingredientes.join(', ')}`;
     const messages = [
         { role: 'system', content: 'Você é um chef de culinária profissional que fornece receitas detalhadas.' },
-        { role: 'user', content: `Crie uma receita usando: ${prompt}, envie o tempo gasto nessa receita na ultima linha separado por ----- em formato de x horas y minutos` }
+        { role: 'user', content: `Crie uma receita usando: ${prompt}, envie o tempo gasto nessa receita na ultima linha separado por ----- no formato Tempo total de preparo: x horas y minutos` }
     ];
     const resposta = await sendPrompt(prompt, messages, 0.7);
+    console.log('Resposta recebida:', resposta);
     const parsedData = parseWithRegex(resposta.recipeText);
-    console.log(parsedData)
     return parsedData;
 }
 
 function parseWithRegex(fullText) {
-  const regex = /^(.*)\*\*Tempo.*:\*\*\s*-----\s*(.*)$/s;
+  const regex = /^(.*?)\s*----+\s*\*\*Tempo.*:\*\*\s*(.*)$/s;
 
   const match = fullText.trim().match(regex);
 

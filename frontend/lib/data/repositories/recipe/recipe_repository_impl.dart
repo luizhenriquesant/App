@@ -30,6 +30,26 @@ class RecipeRepositoryImpl implements RecipeRepository {
   }
 
   @override
+  Future<Result<List<Recipe>>> getAllRecipes() async {
+    try {
+      final resultFromService = await _service.getAllRecipes();
+
+      switch (resultFromService) {
+        case Ok(value: final recipe):
+          print('Repositório: Receitas obtida com sucesso.');
+          return Result.ok(recipe);
+
+        case Error(error: final error):
+          print('Repositório: Serviço retornou um erro: $error');
+          return Result.error(error);
+      }
+    } catch (e) {
+      print('Repositório: Capturou uma exceção inesperada: $e');
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
   Future<Result<void>> delete(int id) async {
     try {
       // await _service.deleteRecipe(id);

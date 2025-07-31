@@ -30,7 +30,7 @@ export async function sendPrompt(prompt, messages, temperature, max_tokens = 100
 
         return {
             success: true,
-            recipe: completion.choices[0].message.content,
+            recipeText: completion.choices[0].message.content,
             usage: completion.usage
         };
     } catch (error) {

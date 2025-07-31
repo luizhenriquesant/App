@@ -59,6 +59,29 @@ class ApiClient {
     }
   }
 
+  Future<Result<List<Recipe>>> getAllRecipes() async {
+    try {
+      final uri = Uri.http('10.0.2.2:8080', '/recipes');
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        // Decodifica a resposta JSON, que é uma lista de objetos
+        final List<dynamic> jsonList = jsonDecode(response.body);
+
+        // Converte cada objeto JSON da lista em um objeto Recipe
+        final recipes = jsonList.map((json) => Recipe.fromJson(json)).toList();
+
+        return Result.ok(recipes);
+      } else {
+        return Result.error(
+          Exception('Falha ao carregar receitas: ${response.statusCode}'),
+        );
+      }
+    } catch (e) {
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
   Future<Result<void>> deleteBooking(int id) async {
     final client = _clientFactory();
     try {

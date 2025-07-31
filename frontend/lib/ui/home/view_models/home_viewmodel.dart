@@ -23,6 +23,7 @@ class HomeViewModel extends ChangeNotifier {
     pickFromCamera = Command0(_pickFromCamera);
     pickFromGallery = Command0(_pickFromGallery);
     uploadImage = Command0(() => _uploadImage());
+    loadRecipes = Command0(_loadRecipes)..execute();
   }
 
   final ImageService _imageService;
@@ -41,6 +42,10 @@ class HomeViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  List<Recipe> _recipes = [];
+  List<Recipe> get recipes => _recipes;
+
+  late Command0 loadRecipes;
   late Command0 pickFromCamera;
   late Command0 pickFromGallery;
   late Command0<void> uploadImage;
@@ -58,6 +63,32 @@ class HomeViewModel extends ChangeNotifier {
   //     notifyListeners();
   //   }
   // }
+
+  Future<Result<void>> _loadRecipes() async {
+    try {
+      final result = await _recipeRepository.getAllRecipes();
+      switch (result) {
+        case Ok(value: final recipes):
+          _recipes = recipes;
+          print(
+            'ViewModel: ${recipes.length} receitas carregadas com sucesso.',
+          );
+          notifyListeners(); // Notifica a UI que a lista foi atualizada
+          return const Result.ok(null);
+
+        case Error(error: final error):
+          print('ViewModel: Erro ao carregar receitas: $error');
+          // Você pode querer uma variável de erro separada para o load
+          _error = error;
+          notifyListeners();
+          return Result.error(error);
+      }
+    } catch (e) {
+      _error = Exception(e.toString());
+      notifyListeners();
+      return Result.error(_error!);
+    }
+  }
 
   Future<Result<void>> _pickFromCamera() async {
     try {

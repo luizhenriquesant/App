@@ -10,6 +10,9 @@ abstract class RecipeRepository {
   /// Creates a new [Recipe].
   Future<Result<Recipe>> generateRecipe(File image);
 
-  /// Delete recipe
+  /// Return all [Recipe]
+  Future<Result<List<Recipe>>> getAllRecipes();
+
+  /// Delete recipe given the id
   Future<Result<void>> delete(int id);
 }
