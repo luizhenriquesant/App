@@ -77,3 +77,18 @@ npx prisma migrate dev --name init-recipe
 # 4. Inicie o servidor do backend.
 # Por padrão, ele rodará em http://localhost:8080
 npm run dev
+
+### 2. Configuração do Frontend
+
+# 1. Em um novo terminal, navegue até a pasta do frontend
+cd frontend
+
+# 2. Instale as dependências do Flutter
+flutter pub get
+
+# 3. Execute o gerador de código (necessário para o Freezed)
+flutter pub run build_runner build --delete-conflicting-outputs
+
+# 4. Inicie o aplicativo Flutter no seu emulador ou dispositivo.
+# O código já está configurado para se conectar ao backend via 10.0.2.2 (emulador Android).
+flutter run
